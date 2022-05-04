@@ -47,4 +47,6 @@ function getResult(){
         result = 'YOU WON!';
     }
     resultDisplay.innerHTML = result;
-}
+} 
+
+let abcd
