@@ -5,6 +5,7 @@ let width = 15
 let direction = 1
 let invadersId
 let goingRight = true
+let aliensRemoved = []
 
 
 //create a square 225 times and add it into the grid div tag
@@ -26,7 +27,10 @@ const alienInvaders = [
 //make the invaders purple
 function draw(){
     for(let i =0; i< alienInvaders.length; i++){
-        squares[alienInvaders[i]].classList.add('invader')
+        //only if the square is not removed yet through boom, then you can make it an invader
+        if(!aliensRemoved.includes(i)){
+            squares[alienInvaders[i]].classList.add('invader')
+        }
     }
 }
 
@@ -39,7 +43,7 @@ function remove(){
     }
 }
 
-//declare that one square as shooter - red
+//declare that one square as shooter - green
 squares[currentShooterIndex].classList.add('shooter')
 
 //move shooter right or left if keydown eventlistener
@@ -111,9 +115,47 @@ function moveInvaders(){
         }
     }
 }
-
-
 invadersId = setInterval(moveInvaders, 500)
+
+function shoot(e){
+    let laserId
+    let currentLaserIndex = currentShooterIndex
+    
+    //define moveLaser function
+    function moveLaser(){
+        //remove it from current laser square (initial its shooterindex)
+        squares[currentLaserIndex].classList.remove('laser')
+        //move the laser one row up
+        currentLaserIndex -= width
+        //new laser is the new current 
+        squares[currentLaserIndex].classList.add('laser')
+
+        //if we hit an invader with laser
+        if(squares[currentLaserIndex].classList.contains('invader')){
+            squares[currentLaserIndex].classList.remove('invader')
+            squares[currentLaserIndex].classList.remove('laser')
+            //make the hit square red
+            squares[currentLaserIndex].classList.add('boom')
+            
+            //after 300ms remove boom - red
+            setTimeout(()=> squares[currentLaserIndex].classList.remove('boom'), 300)
+            //stop moving the laser
+            clearInterval(laserId)
+
+            //go into the alienInvaders array and save the index that square we just hit in a separate array, so it wont get repainted
+            const alienRemoved = alienInvaders.indexOf(currentLaserIndex)
+            aliensRemoved.push(alienRemoved)
+        }
+    }
+    //call moveLaser function if press up
+    switch(e.key){
+            case 'ArrowUp':
+                laserId = setInterval(moveLaser, 100)
+    }
+}
+
+document.addEventListener('keydown', shoot)
+
 
 
 
