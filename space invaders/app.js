@@ -37,16 +37,11 @@ function moveShooter(e){
     squares[currentShooterIndex].classList.remove('shooter')
     switch(e.key){
         case 'ArrowLeft':
-            if (currentShooterIndex % width !== 0){
-                currentShooterIndex -=1
-            }
+            if (currentShooterIndex % width !== 0) currentShooterIndex -=1//we can go left if the shooter is not in the most left row
             break
         case 'ArrowRight' :
-            if(currentShooterIndex % width < width -1){
-                currentShooterIndex +=1
-            }
-            break
-            
+            if(currentShooterIndex % width < width -1) currentShooterIndex +=1
+            break 
     }
     squares[currentShooterIndex].classList.add('shooter')
 }
