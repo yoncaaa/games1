@@ -1,11 +1,14 @@
 const grid = document.querySelector('.grid')
 const resultsDisplay = document.querySelector('.results')
+let alienInvaders = []
 let currentShooterIndex = 202
 let width = 15
 let direction = 1
 let invadersId
 let goingRight = true
 let aliensRemoved = []
+let results= 0
+
 
 
 //create a square 225 times and add it into the grid div tag
@@ -18,11 +21,15 @@ const squares = Array.from(document.querySelectorAll('.grid div'))
 
 
 //make an array with all the indexes that you want the invaders to be in 
-const alienInvaders = [
+function setAlienInvaders(){
+    alienInvaders = [
     0,1,2,3,4,5,6,7,8,9,
     15,16,17,18,19,20,21,22,23,24,
     30,31,32,33,34,35,36,37,38,39
 ]
+}
+
+setAlienInvaders()
 
 //make the invaders purple
 function draw(){
@@ -114,6 +121,14 @@ function moveInvaders(){
             clearInterval(invadersId)
         }
     }
+    //if we have removed all
+    if(aliensRemoved.length === alienInvaders.length){
+        resultsDisplay.innerHTML = 'You Won!'
+        aliensRemoved = []
+        setAlienInvaders()
+        //goingRight = true
+        results = 0
+    }
 }
 invadersId = setInterval(moveInvaders, 500)
 
@@ -125,11 +140,16 @@ function shoot(e){
     function moveLaser(){
         //remove it from current laser square (initial its shooterindex)
         squares[currentLaserIndex].classList.remove('laser')
-        //move the laser one row up
-        currentLaserIndex -= width
-        //new laser is the new current 
-        squares[currentLaserIndex].classList.add('laser')
-
+        //move the laser one row up - only if we are not in the first row
+        if(currentLaserIndex>width-1){
+            currentLaserIndex -= width
+        }
+        //new laser is the new current - only if not first row
+        if(currentLaserIndex > width-1){
+            squares[currentLaserIndex].classList.add('laser')
+        }else {
+            currentLaserIndex = 0
+        }
         //if we hit an invader with laser
         if(squares[currentLaserIndex].classList.contains('invader')){
             squares[currentLaserIndex].classList.remove('invader')
@@ -145,6 +165,8 @@ function shoot(e){
             //go into the alienInvaders array and save the index that square we just hit in a separate array, so it wont get repainted
             const alienRemoved = alienInvaders.indexOf(currentLaserIndex)
             aliensRemoved.push(alienRemoved)
+            results++
+            resultsDisplay.innerHTML=results
         }
     }
     //call moveLaser function if press up
